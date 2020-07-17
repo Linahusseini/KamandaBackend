@@ -49,6 +49,8 @@ const passportJwt = (passport) => {
 
 // Import routes 
 const UsersRoutes = require('./routes/Users');
+const EventsRoutes = require('./routes/Events');
+const ProductsRoutes = require('./routes/Products');
 
 const server = express();
 
@@ -82,6 +84,16 @@ server.use(
     '/users',
     // passport.authenticate('jwt', {session:false}),
     UsersRoutes
+);
+
+server.use(
+    '/events',
+    EventsRoutes
+);
+
+server.use(
+    '/GearBoutique',
+    ProductsRoutes
 );
 
 server.get('*', (req, res)=> {
