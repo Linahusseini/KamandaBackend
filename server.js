@@ -80,6 +80,7 @@ mongoose.connect(
 
 server.use(
     '/users',
+    // passport.authenticate('jwt', {session:false}),
     UsersRoutes
 );
 

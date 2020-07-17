@@ -13,7 +13,8 @@ router.post(
         const formData = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
-            email: req.body.email,
+            username: req.body.username,
+            email: req.body.email,  
             password: req.body.password
         };
         console.log(formData)
@@ -64,22 +65,21 @@ router.post(
 
         // Step 1. Capture formData (email & password)
         const formData = {
-            email: req.body.email,
+            username: req.body.username,
             password: req.body.password
         }
-
-
         // Step 2a. In database, find account that matches email
         UsersModel.findOne(
-            {email: formData.email},
-            (err, document) => {
+            {username: formData.username},
+            (err, document) => { 
+                console.log(document);
 
-                // Step 2b. If email NOT match, reject the login request
-                if(!document) { //Abed: what is the !document, where did we define this? 
-                    res.json("Please check email or password");
+                // Step 2b. If username NOT match, reject the login request
+                if(!document) { 
+                    res.json("Please check username or password");
                 }
 
-                // Step 3. If there's matching email, examine the document's password
+                // Step 3. If there's matching username, examine the document's password
                 else {
 
                     // Step 4. Compare the encrypted password in db with incoming password
@@ -92,7 +92,7 @@ router.post(
                                 // Step 6. Send the JWT to the client
                                 const payload = { 
                                     id: document.id,
-                                    email: document.email
+                                    username: document.username
                                 };
 
                                 jwt.sign(
@@ -112,7 +112,7 @@ router.post(
 
                             // Step 5b. If password NOT match, reject login request
                             else {
-                                res.json("Please check email or password")
+                                res.json("Please check username or password")
                             }
                         }
                     )
@@ -123,5 +123,42 @@ router.post(
         )
     }
 )
+
+
+router.post(
+    '/update',
+    (req, res) => {
+        const formData = {
+            username: req.body.username,
+            _id: req.body._id,
+            lastName: req.body.lastName,
+            firstName: req.body.firstName
+        };
+
+        UsersModel
+        .findOneAndUpdate(
+            { _id: formData._id }, // search criteria
+            { firstName: formData.firstName,
+                lastName: formData.lastName,
+                username: formData.username,
+             }, // the keys & values to update
+            {}, // options (if any)
+            (err, document) => {
+
+                if(err) {
+                    console.log(err);
+                } else {
+                    res.json(
+                        {
+                            message: 'User updated',
+                            document: document
+                        }
+                    )
+                }
+            }
+        )
+    }
+);
+
 
 module.exports = router;
