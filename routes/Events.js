@@ -10,7 +10,6 @@ router.post(
         const formData = {
             community: req.body.community,
             description: req.body.description,
-            image: req.body.image,
             city: req.body.city,
             eventdate: req.body.eventdate,
             members: req.body.members

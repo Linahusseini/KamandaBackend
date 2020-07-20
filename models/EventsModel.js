@@ -11,10 +11,6 @@ const EventsSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        image: {
-            type: String,
-            default: './default image'
-        },
         city: {
             type: String,
             required: true
