@@ -1,6 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const EventsModel = require('../models/Eventsmodel');
 
 router.post(
@@ -10,10 +11,10 @@ router.post(
         const formData = {
             community: req.body.community,
             description: req.body.description,
-            image: req.body.image,
             city: req.body.city,
             eventdate: req.body.eventdate,
-            members: req.body.members
+            members: req.body.members,
+            joined: req.body.joined
         }
 
         const newEventsModel = EventsModel(formData);
@@ -75,5 +76,70 @@ router.get(
 
     }
 );
+
+router.post(
+    '/join',
+    (req, res) => {
+
+        const formData = {
+            eventId: req.events.ObjectId,
+            userId: req.users.ObjectId,
+        };
+
+        EventsModel.findOne (
+            { "_id": formData.eventId },           
+            function ( err, foundEvent ) {
+
+                if (err) {
+
+                    console.log(err);
+
+                } else {
+                    if (!foundEvent) {
+
+                        res.send("Event not found");
+
+                    } else {
+
+                        if (foundEvent.joined.includes(formData.userId)){
+
+                            EventsModel.update(
+                                {"_id" : mongoose.Types.ObjectId(formData.eventId)},
+                                {$pull: { "joined" : [mongoose.Types.ObjectId(formData.userId)]}},
+                                (err, res) => {
+                                    if (err) {
+                                        console.log("not updated")
+                                    }
+                                    else{
+                                       console.log("Updated");
+                                    }
+                                }
+                            );
+                        }
+                        else {
+
+                            EventsModel.update(
+                                {"_id" : mongoose.Types.ObjectId(formData.eventId)},
+                                {$push: { "joined" : [mongoose.Types.ObjectId(formData.userId)]}},
+                                (err, res) => {
+                                    if (err) {
+                                        console.log("not updated")
+                                    }
+                                    else{
+                                       console.log("Updated");
+                                    }
+                                }
+                            );
+
+                        }
+
+                    }
+                }
+            }
+        )
+        
+    }
+    
+)
 
 module.exports = router
