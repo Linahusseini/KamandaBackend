@@ -3,6 +3,9 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const secret = "s3cr3t100";
+const passport = require('passport');
+const cloudinary = require('cloudinary');
+const { route } = require('./Products');
 
 const UsersModel = require('../models/UsersModel');
 
@@ -155,5 +158,69 @@ router.post(
     }
 );
 
+
+
+router.post("/ProfilePage", (req, res) => {
+    
+    const user = req.user._id;
+    console.log(user)
+    
+    const formData = {
+        dateOfBirth: req.body.dateOfBirth,
+        occupation: req.body.occupation,
+        basedIn: req.body.basedIn,
+        nationality: req.body.nationality,
+        interests: req.body.interests
+    };
+  
+    // console.log("From the user", formData);
+  
+        UsersModel.updateMany({_id: user}, {$push: 
+            {
+            dateOfBirth:    formData.dateOfBirth,
+            occupation:     formData.occupation,
+            basedIn:        formData.basedIn,
+            nationality:    formData.nationality,
+            interests:      [formData.interests]   
+        }
+    },(err,result)=>{
+                    if(err) {
+                        console.log("there is an error",err)
+            
+                    }
+                    else {console.log("success!",result)}  
+               
+                                   
+                }
+
+            );
+            res.json("Your data has been saved!")
+
+        }
+    )
+    
+    router.get(
+        '/',
+        (req, res)=>{
+    
+            // (1) Fetch all the documents using .find()
+            UsersModel.find()
+    
+            // (2) Once the results are ready, use .json() to send the results
+            .then(
+                (results) => {
+                    // res.json = res.send() + converts to JSON
+                    res.json({user: results})
+                }
+            )
+            .catch( 
+                (e)=> {
+                    console.log('error occured', e)
+                }
+            );
+    
+        }
+    );
+    
 
 module.exports = router;

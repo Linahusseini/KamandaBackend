@@ -23,6 +23,26 @@ const UsersSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+
+        occupation: {
+            type: String,
+        },
+
+        nationality: {
+            type: String,
+        },
+
+        basedIn: {
+            type: String,
+        },
+
+        interests: {
+            type: Array,
+        },
+
+        dateOfBirth: {
+            type: Date,
+        },
     
         date: {
 
